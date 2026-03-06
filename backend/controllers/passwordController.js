@@ -25,7 +25,7 @@ exports.forgotPassword = (req, res) => {
       return res.status(404).json({ message: "This email is not registered" });
     }
 
-    const resetLink = `http://localhost:5500/frontend/reset.html?token=${token}`;
+    const resetLink = `file:///c:/Users/linge/OneDrive/Desktop/Sponsored-program- portal/frontend/reset.html?token=${token}`;
 
     await sendEmail(
       email,

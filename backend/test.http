@@ -1,0 +1,61 @@
+#################################################
+### LOGIN (ADMIN)
+#################################################
+
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "lingeshgr06@gmail.com",
+  "password": "Lingesh@2006"
+}
+
+
+#################################################
+### GET ALL APPLICATIONS
+#################################################
+
+GET http://localhost:5000/api/admin/applications
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzcwOTAzOTgyLCJleHAiOjE3NzA5MDc1ODJ9.SzippAF4zWp4mGAEEB8kGdW90odpeykvQFr-o5-P7ow
+
+
+#################################################
+### GET APPLICATION STATS
+#################################################
+
+GET http://localhost:5000/api/admin/applications/stats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzcwOTAzOTgyLCJleHAiOjE3NzA5MDc1ODJ9.SzippAF4zWp4mGAEEB8kGdW90odpeykvQFr-o5-P7ow
+
+
+#################################################
+### UPDATE STATUS → APPROVED
+#################################################
+
+PUT http://localhost:5000/api/admin/applications/status/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzcwOTAzOTgyLCJleHAiOjE3NzA5MDc1ODJ9.SzippAF4zWp4mGAEEB8kGdW90odpeykvQFr-o5-P7ow
+
+{
+  "status": "approved"
+}
+
+
+#################################################
+### UPDATE STATUS → REJECTED
+#################################################
+
+PUT http://localhost:5000/api/admin/applications/status/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzcwOTAzOTgyLCJleHAiOjE3NzA5MDc1ODJ9.SzippAF4zWp4mGAEEB8kGdW90odpeykvQFr-o5-P7ow
+
+{
+  "status": "rejected"
+}
+
+
+#################################################
+### DELETE APPLICATION
+#################################################
+
+DELETE http://localhost:5000/api/admin/applications/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzcwOTAzOTgyLCJleHAiOjE3NzA5MDc1ODJ9.SzippAF4zWp4mGAEEB8kGdW90odpeykvQFr-o5-P7ow

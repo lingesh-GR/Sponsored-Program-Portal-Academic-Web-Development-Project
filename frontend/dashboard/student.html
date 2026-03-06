@@ -1,8 +1,341 @@
-<h1>Student Dashboard</h1>
-<button onclick="logout()">Logout</button>
-<script>
-function logout() {
-  localStorage.clear();
-  location.href = "../login.html";
-}
-</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard — Sponsored Program Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+  <!-- ================= TOP NAVBAR ================= -->
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-icon">🎓</span>
+      <span class="logo-text">Sponsored Program Portal</span>
+    </div>
+    <div class="user-menu">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span class="theme-toggle-label" id="themeLabel">Dark</span>
+      </button>
+      <div class="notification-bell" onclick="toggleBellDropdown(event)">
+        🔔
+        <div class="bell-badge" id="bellBadge" style="display:none">0</div>
+        <div class="bell-dropdown" id="bellDropdown">
+          <div class="bell-dropdown-header">
+            Notifications
+            <span onclick="clearNotifications(event)">Clear all</span>
+          </div>
+          <div class="bell-dropdown-list" id="bellList">
+            <div class="bell-empty">No new notifications</div>
+          </div>
+        </div>
+      </div>
+      <span class="student-label">🎓 <span id="profileName">Student</span></span>
+      <button class="logout-btn" onclick="logout()">
+        <span>⏻</span> Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>Navigation</h3>
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">☰</button>
+      </div>
+
+      <ul>
+        <li class="active" onclick="showSection('dashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </li>
+        <li onclick="showSection('applications')">
+          <span class="nav-icon">📋</span> My Applications
+        </li>
+        <li onclick="showSection('schemes')">
+          <span class="nav-icon">🏛️</span> Gov. Schemes
+        </li>
+        <li onclick="showSection('internships')">
+          <span class="nav-icon">💼</span> Internships
+        </li>
+        <li onclick="showSection('events')">
+          <span class="nav-icon">📅</span> Events
+        </li>
+        <li onclick="showSection('saved')">
+          <span class="nav-icon">🔖</span> Saved Items
+        </li>
+        <li onclick="showSection('profile')">
+          <span class="nav-icon">👤</span> My Profile
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-text">Sponsored Portal v1.0</div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboardSection">
+        <div class="section-header">
+          <h2>Student Dashboard</h2>
+          <p class="section-subtitle">Track your applications and explore opportunities</p>
+        </div>
+
+        <!-- Welcome Greeting -->
+        <div class="welcome-banner" id="welcomeBanner">
+          <div class="welcome-emoji">👋</div>
+          <div class="welcome-text">
+            <h2 id="welcomeGreeting">Welcome back!<span class="typing-cursor">|</span></h2>
+            <p id="welcomeSubtext">Here's what's happening today.</p>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="studentDashSearch" placeholder="Search applications..." oninput="filterStudentDash()">
+          <span class="shortcut-hint"><span class="shortcut-key">Ctrl</span>+<span class="shortcut-key">K</span></span>
+        </div>
+
+        <div class="cards">
+          <div class="card card-total">
+            <div class="card-icon">📑</div>
+            <div class="card-info">
+              <h3>Total Applied</h3>
+              <p id="totalCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-pending">
+            <div class="card-icon">⏳</div>
+            <div class="card-info">
+              <h3>Pending</h3>
+              <p id="pendingCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-approved">
+            <div class="card-icon">✅</div>
+            <div class="card-info">
+              <h3>Approved</h3>
+              <p id="approvedCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-rejected">
+            <div class="card-icon">❌</div>
+            <div class="card-info">
+              <h3>Rejected</h3>
+              <p id="rejectedCount">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📋 Recent Applications</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Scheme</th>
+                <th>Status</th>
+                <th>Applied Date</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= MY APPLICATIONS ================= -->
+      <section id="applicationsSection" style="display:none;">
+        <div class="section-header">
+          <h2>📋 My Applications</h2>
+          <p class="section-subtitle">View all your submitted applications and their current status</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="studentAppSearch" placeholder="Search by scheme or status..."
+            oninput="filterStudentApps()">
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>SNO</th>
+                <th>Scheme</th>
+                <th>Status</th>
+                <th>Applied Date</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= GOVERNMENT SCHEMES ================= -->
+      <section id="schemesSection" style="display:none;">
+        <div class="section-header">
+          <h2>🏛️ Government Schemes</h2>
+          <p class="section-subtitle">Browse available government schemes and apply directly</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="studentSchemeSearch" placeholder="Search schemes..." oninput="filterStudentSchemes()">
+        </div>
+
+        <div id="schemeCards" class="card-grid"></div>
+      </section>
+
+      <!-- ================= INTERNSHIPS ================= -->
+      <section id="internshipsSection" style="display:none;">
+        <div class="section-header">
+          <h2>💼 Internship Opportunities</h2>
+          <p class="section-subtitle">Explore internship programs and submit your application</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="studentInternSearch" placeholder="Search internships..."
+            oninput="filterStudentInternships()">
+        </div>
+
+        <div id="internshipCards" class="card-grid"></div>
+      </section>
+
+      <!-- ================= EVENTS ================= -->
+      <section id="eventsSection" style="display:none;">
+        <div class="section-header">
+          <h2>📅 Upcoming Events</h2>
+          <p class="section-subtitle">Discover events, hackathons, and registration opportunities</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="studentEventSearch" placeholder="Search events..." oninput="filterStudentEvents()">
+        </div>
+
+        <div id="eventCards" class="card-grid"></div>
+      </section>
+
+      <!-- ================= SAVED ITEMS ================= -->
+      <section id="savedSection" style="display:none;">
+        <div class="section-header">
+          <h2>🔖 Saved Items</h2>
+          <p class="section-subtitle">Your bookmarked schemes, internships, and events</p>
+        </div>
+
+        <div class="saved-filter-tabs">
+          <button class="saved-tab active" onclick="filterSaved('all', this)">All</button>
+          <button class="saved-tab" onclick="filterSaved('scheme', this)">Schemes</button>
+          <button class="saved-tab" onclick="filterSaved('internship', this)">Internships</button>
+          <button class="saved-tab" onclick="filterSaved('event', this)">Events</button>
+        </div>
+
+        <div id="savedCards" class="card-grid"></div>
+      </section>
+
+      <!-- ================= PROFILE ================= -->
+      <section id="profileSection" style="display:none;">
+        <div class="section-header">
+          <h2>👤 My Profile</h2>
+          <p class="section-subtitle">Manage your personal information</p>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-avatar-section">
+            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <button class="btn-change-avatar" onclick="document.getElementById('avatarInput').click()">📷 Change
+              Photo</button>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none"
+              onchange="handleAvatarUpload(event)">
+          </div>
+
+          <div class="profile-form">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="profileFullName" placeholder="Enter your full name">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="profileDepartment" placeholder="e.g. Computer Science">
+              </div>
+              <div class="form-group">
+                <label>Year</label>
+                <select id="profileYear">
+                  <option value="">Select Year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="profilePhone" placeholder="e.g. +91 9876543210">
+            </div>
+            <div class="form-group">
+              <label>Bio</label>
+              <textarea id="profileBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+            </div>
+            <button class="btn-save-profile" onclick="saveProfile()">💾 Save Profile</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= CUSTOM CONFIRM MODAL ================= -->
+  <div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-icon" id="confirmModalIcon">❓</div>
+      <h3 class="modal-title" id="confirmModalTitle">Confirm Action</h3>
+      <p class="modal-message" id="confirmModalMsg">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" id="confirmModalCancel">Cancel</button>
+        <button class="modal-btn modal-btn-confirm" id="confirmModalOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CUSTOM ALERT MODAL ================= -->
+  <div id="alertModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-icon" id="alertModalIcon">✅</div>
+      <h3 class="modal-title" id="alertModalTitle">Success</h3>
+      <p class="modal-message" id="alertModalMsg">Action completed.</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-confirm" id="alertModalOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+
+
+  <script src="../js/student.js"></script>
+
+</body>
+
+</html>

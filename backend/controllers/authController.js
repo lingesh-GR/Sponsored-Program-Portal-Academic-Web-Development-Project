@@ -74,7 +74,7 @@ exports.register = async (req, res) => {
    LOGIN
 ========================= */
 exports.login = (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: "Missing credentials" });
@@ -103,10 +103,10 @@ exports.login = (req, res) => {
       const token = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: rememberMe ? "7d" : "1h" }
       );
 
-      res.json({ token, role: user.role });
+      res.json({ token, role: user.role, username: user.username });
     }
   );
 };

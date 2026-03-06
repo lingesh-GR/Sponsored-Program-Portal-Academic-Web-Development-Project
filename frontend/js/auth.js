@@ -77,10 +77,12 @@ async function login() {
   }
 
   try {
+    const rememberMe = document.getElementById('rememberMe')?.checked || false;
+
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, rememberMe })
     });
 
     const data = await res.json();
@@ -91,6 +93,14 @@ async function login() {
     }
 
     localStorage.setItem("token", data.token);
+    localStorage.setItem("username", data.username);
+
+    // Remember Me: store flag
+    if (rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      localStorage.removeItem('rememberMe');
+    }
 
     // ✅ ROLE BASED REDIRECT
     window.location.replace(
@@ -163,3 +173,35 @@ toggleRegister?.addEventListener("click", () => {
   passwordInput.type =
     passwordInput.type === "password" ? "text" : "password";
 });
+
+/* =========================
+   🔐 PASSWORD STRENGTH METER
+========================= */
+function checkPasswordStrength() {
+  const pw = document.getElementById('password')?.value || '';
+  const bar = document.getElementById('strengthBar');
+  const label = document.getElementById('strengthLabel');
+  if (!bar || !label) return;
+
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+  const levels = [
+    { width: '0%', color: 'transparent', text: '', textColor: '#64748b' },
+    { width: '20%', color: '#ef4444', text: 'Very Weak', textColor: '#ef4444' },
+    { width: '40%', color: '#f97316', text: 'Weak', textColor: '#f97316' },
+    { width: '60%', color: '#eab308', text: 'Fair', textColor: '#eab308' },
+    { width: '80%', color: '#22c55e', text: 'Strong', textColor: '#22c55e' },
+    { width: '100%', color: '#16a34a', text: 'Very Strong 💪', textColor: '#16a34a' }
+  ];
+
+  const level = levels[score];
+  bar.style.width = level.width;
+  bar.style.background = level.color;
+  label.textContent = level.text;
+  label.style.color = level.textColor;
+}

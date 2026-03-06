@@ -35,3 +35,8 @@ exports.isStudent = (req, res, next) => {
   }
   next();
 };
+
+exports.protect = (req, res, next) => {
+  next(); // for now allow all requests
+};
+

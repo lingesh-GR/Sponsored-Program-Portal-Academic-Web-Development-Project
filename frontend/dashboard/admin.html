@@ -1,8 +1,381 @@
-<h1>Admin Dashboard</h1>
-<button onclick="logout()">Logout</button>
-<script>
-function logout() {
-  localStorage.clear();
-  location.href = "../login.html";
-}
-</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Sponsored Program Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ================= TOP NAVBAR ================= -->
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-icon">🎓</span>
+      <span class="logo-text">Sponsored Program Portal</span>
+    </div>
+    <div class="user-menu">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span class="theme-toggle-label" id="themeLabel">Dark</span>
+      </button>
+      <div class="notification-bell" onclick="toggleBellDropdown(event)">
+        🔔
+        <div class="bell-badge" id="bellBadge" style="display:none">0</div>
+        <div class="bell-dropdown" id="bellDropdown">
+          <div class="bell-dropdown-header">
+            Notifications
+            <span onclick="clearNotifications(event)">Clear all</span>
+          </div>
+          <div class="bell-dropdown-list" id="bellList">
+            <div class="bell-empty">No new notifications</div>
+          </div>
+        </div>
+      </div>
+      <span class="admin-label">👑 <span id="profileName">Admin</span></span>
+      <button class="logout-btn" onclick="logout()">
+        <span>⏻</span> Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>Navigation</h3>
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">☰</button>
+      </div>
+
+      <ul>
+        <li class="active" onclick="showSection('dashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </li>
+        <li onclick="showSection('applications')">
+          <span class="nav-icon">📋</span> Applications
+        </li>
+        <li onclick="showSection('schemes')">
+          <span class="nav-icon">🏛️</span> Gov. Schemes
+        </li>
+        <li onclick="showSection('internship')">
+          <span class="nav-icon">💼</span> Internships
+        </li>
+        <li onclick="showSection('events')">
+          <span class="nav-icon">📅</span> Events
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-text">Sponsored Portal v1.0</div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboardSection">
+        <div class="section-header">
+          <h2>Dashboard Overview</h2>
+          <p class="section-subtitle">Monitor application statistics and recent activity</p>
+          <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+        </div>
+
+        <!-- Welcome Greeting -->
+        <div class="welcome-banner" id="welcomeBanner">
+          <div class="welcome-emoji">👋</div>
+          <div class="welcome-text">
+            <h2 id="welcomeGreeting">Welcome back!<span class="typing-cursor">|</span></h2>
+            <p id="welcomeSubtext">Here's what's happening today.</p>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="dashboardSearch" placeholder="Search applications..." oninput="filterDashboard()">
+          <span class="shortcut-hint"><span class="shortcut-key">Ctrl</span>+<span class="shortcut-key">K</span></span>
+        </div>
+
+        <div class="cards">
+          <div class="card card-total">
+            <div class="card-icon">📑</div>
+            <div class="card-info">
+              <h3>Total Applications</h3>
+              <p id="totalCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-pending">
+            <div class="card-icon">⏳</div>
+            <div class="card-info">
+              <h3>Pending</h3>
+              <p id="pendingCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-approved">
+            <div class="card-icon">✅</div>
+            <div class="card-info">
+              <h3>Approved</h3>
+              <p id="approvedCount">0</p>
+            </div>
+          </div>
+
+          <div class="card card-rejected">
+            <div class="card-icon">❌</div>
+            <div class="card-info">
+              <h3>Rejected</h3>
+              <p id="rejectedCount">0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== CHARTS ROW ===== -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>📊 Status Breakdown</h3>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="statusPieChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>📈 Monthly Trends</h3>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="monthlyBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ACTIVITY LOG ===== -->
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📝 Recent Activity</h3>
+          </div>
+          <div id="activityLog" class="activity-log">
+            <p class="no-data">Loading activity...</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📋 Application Overview</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Scheme</th>
+                <th>Status</th>
+                <th>Applied Date</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= APPLICATIONS ================= -->
+      <section id="applicationsSection" style="display:none;">
+        <div class="section-header">
+          <h2>All Applications</h2>
+          <p class="section-subtitle">Manage, approve, or reject student applications</p>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="export-bar">
+          <button class="export-btn export-csv" onclick="exportCSV()">📄 Export CSV</button>
+          <button class="export-btn export-pdf" onclick="exportPDF()">📄 Export PDF</button>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="applicationsSearch" placeholder="Search by name, email, scheme..."
+            oninput="filterApplications()">
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Scheme</th>
+                <th>Status</th>
+                <th>Applied Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= SCHEMES ================= -->
+      <section id="schemesSection" style="display:none;">
+        <div class="section-header">
+          <h2>🏛️ Government Schemes</h2>
+          <p class="section-subtitle">Add and manage sponsored program schemes</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="schemesSearch" placeholder="Search schemes..." oninput="filterSchemes()">
+        </div>
+
+        <div class="form-card">
+          <h3 class="form-title">➕ Add New Scheme</h3>
+          <div class="form-grid">
+            <input type="text" id="schemeTitle" placeholder="Scheme Title" required>
+            <input type="url" id="schemeWebsite" placeholder="Official Website URL (https://example.com)">
+            <textarea id="schemeDesc" placeholder="Description" required></textarea>
+            <textarea id="schemeEligibility" placeholder="Eligibility Criteria" required></textarea>
+            <input type="date" id="schemeDeadline" required>
+          </div>
+          <button class="primary-btn" onclick="addScheme()">
+            ➕ Add Scheme
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📋 All Schemes</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>SNO</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Eligibility</th>
+                <th>Deadline</th>
+                <th>Website</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="schemeTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= INTERNSHIP ================= -->
+      <section id="internshipSection" style="display:none;">
+        <div class="section-header">
+          <h2>💼 Internship Opportunities</h2>
+          <p class="section-subtitle">Add and manage internship listings</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="internshipsSearch" placeholder="Search internships..." oninput="filterInternships()">
+        </div>
+
+        <div class="form-card">
+          <h3 class="form-title">➕ Add New Internship</h3>
+          <div class="form-grid">
+            <input type="text" id="internTitle" placeholder="Internship Title" required>
+            <input type="url" id="internWebsite" placeholder="Official Website URL (https://example.com)">
+            <textarea id="internDesc" placeholder="Description" required></textarea>
+            <textarea id="internEligibility" placeholder="Eligibility Criteria" required></textarea>
+            <input type="date" id="internDeadline" required>
+          </div>
+          <button class="primary-btn" onclick="addInternship()">
+            ➕ Add Internship
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📋 All Internships</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>SNO</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Eligibility</th>
+                <th>Deadline</th>
+                <th>Website</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="internshipTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= EVENTS ================= -->
+      <section id="eventsSection" style="display:none;">
+        <div class="section-header">
+          <h2>📅 Event Registrations</h2>
+          <p class="section-subtitle">Add and manage upcoming events</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="eventsSearch" placeholder="Search events..." oninput="filterEvents()">
+        </div>
+
+        <div class="form-card">
+          <h3 class="form-title">➕ Add New Event</h3>
+          <div class="form-grid">
+            <input type="text" id="eventTitle" placeholder="Event Title" required>
+            <input type="url" id="eventWebsite" placeholder="Official Website URL (https://example.com)">
+            <textarea id="eventDesc" placeholder="Description" required></textarea>
+            <input type="date" id="eventDate" required>
+          </div>
+          <button class="primary-btn" onclick="addEvent()">
+            ➕ Add Event
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>📋 All Events</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>SNO</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Website</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="eventTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+
+
+  <script src="../js/admin.js"></script>
+
+</body>
+
+</html>

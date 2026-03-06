@@ -1,57 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Sponsored Program Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/auth.css">
 </head>
+
 <body>
 
-<div class="card">
-  <h2>Create Account</h2>
-  <p>Register to continue</p>
+  <div class="auth-container">
 
-  <input
-    id="email"
-    type="email"
-    placeholder="Email"
-    autocomplete="off"
-    required
-  />
+    <!-- ========== LEFT — BRANDING ========== -->
+    <div class="brand-panel">
+      <div class="brand-logo">🚀</div>
+      <h1 class="brand-title">Sponsored Program Portal</h1>
+      <p class="brand-tagline">Join thousands of students accessing government schemes, internships & events</p>
+    </div>
 
-  <input
-    id="username"
-    placeholder="Username"
-    autocomplete="off"
-    required
-  />
+    <!-- ========== RIGHT — FORM ========== -->
+    <div class="form-panel">
+      <div class="card">
+        <h2>Create Account</h2>
+        <p class="subtitle">Register to get started</p>
 
-  <!-- Password with Eye Button -->
-  <div class="password-box">
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-      required
-    />
-    <span class="eye" id="toggleRegister">👁️</span>
+        <!-- Email -->
+        <div class="form-group">
+          <span class="input-icon">📧</span>
+          <input id="email" type="email" placeholder="Email address" autocomplete="off" required />
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+          <span class="input-icon">👤</span>
+          <input id="username" type="text" placeholder="Username" autocomplete="off" required />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <span class="input-icon">🔒</span>
+          <input id="password" type="password" placeholder="Password" required oninput="checkPasswordStrength()" />
+          <span class="eye-toggle" id="toggleRegister">👁️</span>
+        </div>
+        <!-- Password Strength -->
+        <div class="strength-meter">
+          <div class="strength-bar" id="strengthBar"></div>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+
+        <!-- Role -->
+        <div class="form-group">
+          <span class="input-icon">🎭</span>
+          <select id="role" required>
+            <option value="">Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+
+        <!-- Error -->
+        <p id="error-msg" class="error"></p>
+
+        <!-- Button -->
+        <button class="auth-btn" onclick="registerUser()">Create Account</button>
+
+        <!-- Login link -->
+        <div class="auth-links">
+          Already have an account? <a href="login.html">Sign In</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <select id="role" required>
-    <option value="">Select Role</option>
-    <option value="admin">Admin</option>
-    <option value="student">Student</option>
-  </select>
-
-  <p id="error-msg" class="error"></p>
-
-  <button onclick="registerUser()">Register</button>
-
-  <div class="link">
-    Already have an account? <a href="login.html">Login</a>
-  </div>
-</div>
-
-<script src="js/auth.js"></script>
+  <script src="js/auth.js"></script>
 </body>
+
 </html>

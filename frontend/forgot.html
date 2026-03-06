@@ -1,36 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Forgot Password</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password — Sponsored Program Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/auth.css">
 </head>
+
 <body>
 
-<div class="card">
-  <h2>Forgot Password</h2>
+  <div class="auth-container">
 
-  <div class="input-wrapper">
-    <input
-      type="text"
-      id="email"
-      placeholder="Email address"
-      autocomplete="off"
-    />
+    <!-- ========== LEFT — BRANDING ========== -->
+    <div class="brand-panel">
+      <div class="brand-logo">🔐</div>
+      <h1 class="brand-title">Sponsored Program Portal</h1>
+      <p class="brand-tagline">Reset your password securely and get back to exploring opportunities</p>
+    </div>
 
-    <!-- EMAIL SUGGESTION LIST -->
-    <ul id="emailList" class="email-list"></ul>
+    <!-- ========== RIGHT — FORM ========== -->
+    <div class="form-panel">
+      <div class="card">
+        <div class="page-icon">🔒</div>
+        <h2>Forgot Password?</h2>
+        <p class="subtitle">Enter your email and we'll send you a reset link</p>
+
+        <!-- Email -->
+        <div class="form-group input-wrapper">
+          <span class="input-icon">📧</span>
+          <input type="text" id="email" placeholder="Email address" autocomplete="off" />
+          <!-- EMAIL SUGGESTION LIST -->
+          <ul id="emailList" class="email-list"></ul>
+        </div>
+
+        <!-- Message -->
+        <p id="msg"></p>
+
+        <!-- Button -->
+        <button class="auth-btn" type="button" onclick="sendReset()">Send Reset Link</button>
+
+        <!-- Back to login -->
+        <div class="auth-links">
+          Remember your password? <a href="login.html">Back to Login</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <p id="msg"></p>
-
-  <button type="button" onclick="sendReset()">Send Reset Link</button>
-
-  <br><br>
-  <a href="login.html">Back to Login</a>
-</div>
-
-<!-- IMPORTANT: script at bottom -->
-<script src="js/password.js"></script>
+  <!-- IMPORTANT: script at bottom -->
+  <script src="js/password.js"></script>
 </body>
+
 </html>
